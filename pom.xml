@@ -29,6 +29,19 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- MySQL 驱动：连接MySQL数据库 -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope> <!-- 运行时生效，无需编译依赖 -->
+        </dependency>
+
+        <!-- MyBatis整合Spring Boot：简化Mapper开发 -->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>2.3.0</version> <!-- 版本可根据Spring Boot版本适配，2.3.0适配Spring Boot 2.x/3.x -->
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
