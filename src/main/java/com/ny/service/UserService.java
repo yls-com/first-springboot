@@ -6,4 +6,7 @@ import java.util.List;
 
 public interface UserService {
     public List<User> findAllUser();
+
+    // 登录方法声明
+    public User login(String username, String password);
 }

@@ -18,4 +18,10 @@ public class UserServiceImpl implements UserService {
     public List<User> findAllUser() {
         return userMapper.findAllUser();
     }
+
+    // 实现登录方法
+    @Override
+    public User login(String username, String password) {
+        return userMapper.findUser(username, password);
+    }
 }
