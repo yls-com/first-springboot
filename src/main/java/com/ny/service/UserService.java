@@ -9,4 +9,6 @@ public interface UserService {
 
     // 登录方法声明
     public User login(String username, String password);
+
+    public User findUserByUsername(String username);
 }

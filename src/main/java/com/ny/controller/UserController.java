@@ -30,5 +30,16 @@ public class UserController {
             return Result.error("用户名或密码错误");
         }
     }
+
+    // 根据用户名查询用户信息 http://localhost:8080/findUserByUsername?username=admin
+    @GetMapping("/findUserByUsername")
+    public Result findUserByUsername(@RequestParam String username) {
+        User user = userService.findUserByUsername(username);
+        System.out.println(user);
+        if (username != null){
+            return Result.success(user);
+        }
+        return Result.error("用户不存在");
+    }
 }
 

@@ -15,4 +15,7 @@ public interface UserMapper {
     // 登录查询方法
     @Select("select * from user where username = #{username} and password = #{password}")
     User findUser(@Param("username") String username, @Param("password") String password);
+
+    @Select("select * from user where username = #{username}")
+    User findUserByName(@Param("username") String username);
 }
