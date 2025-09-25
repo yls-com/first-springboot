@@ -6,6 +6,7 @@ import com.ny.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -29,4 +30,22 @@ public class UserServiceImpl implements UserService {
     public User findUserByUsername(String username) {
         return userMapper.findUserByName(username);
     }
+
+    @Override
+    public boolean register(User user) {
+        // 检查用户名是否已存在
+        User existingUser = userMapper.findUserByName(user.getUsername());
+        if (existingUser != null) {
+            return false; // 用户名已存在，注册失败
+        }
+
+        // 设置默认值
+        user.setIs_active(1); // 默认激活状态
+        user.setCreated_time(new Date()); // 设置创建时间
+
+        // 执行插入操作
+        int result = userMapper.insertUser(user);
+        return result > 0; // 插入成功返回true，否则返回false
+    }
+
 }

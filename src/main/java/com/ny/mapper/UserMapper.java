@@ -1,6 +1,7 @@
 package com.ny.mapper;
 
 import com.ny.entity.User;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -18,4 +19,9 @@ public interface UserMapper {
 
     @Select("select * from user where username = #{username}")
     User findUserByName(@Param("username") String username);
+
+    @Insert("INSERT INTO user(username, password, nickname, phone, email, is_active, created_time) " +
+            "VALUES(#{username}, #{password}, #{nickname}, #{phone}, #{email}, #{is_active}, #{created_time})")
+    int insertUser(User user);
+
 }

@@ -11,4 +11,8 @@ public interface UserService {
     public User login(String username, String password);
 
     public User findUserByUsername(String username);
+
+    // 注册方法声明
+    public boolean register(User user);
+
 }

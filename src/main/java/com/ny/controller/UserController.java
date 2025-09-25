@@ -41,5 +41,17 @@ public class UserController {
         }
         return Result.error("用户不存在");
     }
+
+    // 注册接口 http://localhost:8080/register
+    @PostMapping("/register")
+    public Result register(User user) {
+        boolean success = userService.register(user);
+        if (success) {
+            return Result.success("注册成功");
+        } else {
+            return Result.error("注册失败，用户名已存在");
+        }
+    }
+
 }
 
