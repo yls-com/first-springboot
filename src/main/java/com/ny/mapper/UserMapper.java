@@ -25,4 +25,8 @@ public interface UserMapper {
             "VALUES(#{username}, #{password}, #{nickname}, #{phone}, #{email}, #{is_active}, #{created_time})")
     int registertUser(User user);
 
+    //根据邮箱号码查询用户是否存在
+    @Select("select * from user where email = #{email}")
+    User findUserByEmail(@Param("email") String email);
+
 }

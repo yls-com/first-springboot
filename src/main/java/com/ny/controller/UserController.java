@@ -54,5 +54,21 @@ public class UserController {
         }
     }
 
+    // 根据邮箱查询用户信息 http://localhost:8082/findUserByEmail?email=<EMAIL>
+    @GetMapping("/findUserByEmail")
+    public Result findUserByEmail(String email){
+        User user = userService.findUserByEmail(email);
+        if (user != null){
+            return Result.success(user);
+        }
+        return Result.error("邮箱不存在");
+    }
+    // 发送邮箱验证码 http://localhost:8082/sendEmailCode?email=<EMAIL>
+    @GetMapping("/sendEmailCode")
+    public Result sendEmailCode(String email){
+        userService.sendEmailCode(email);
+        return Result.success("验证码发送成功");
+    }
+
 }
 

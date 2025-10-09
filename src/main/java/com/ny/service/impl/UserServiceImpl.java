@@ -2,6 +2,7 @@ package com.ny.service.impl;
 
 import com.ny.entity.User;
 import com.ny.mapper.UserMapper;
+import com.ny.service.EmailService;
 import com.ny.service.UserService;
 import com.ny.until.PasswordUntil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public List<User> findAllUser() {
@@ -51,6 +54,26 @@ public class UserServiceImpl implements UserService {
         // 执行插入操作
         int result = userMapper.registertUser(user);
         return result > 0; // 插入成功返回true，否则返回false
+    }
+
+    @Override
+    public User findUserByEmail(String email) {
+        return userMapper.findUserByEmail(email);
+    }
+
+    @Override
+    public void sendEmailCode(String email) {
+        // 检查邮箱号是否存在
+        User user = userMapper.findUserByEmail(email);
+        if (user != null){
+            //生成验证码
+            String code = emailService.generateCode();
+            // 把验证码存储到redis数据中,进行验证和过期的
+//            ValueOperations<String, String> ops = redisTemplate.opsForValue();
+//            ops.set(email, code);
+            emailService.sendEmail(email, code);
+        }
+
     }
 
 }
