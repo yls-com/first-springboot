@@ -15,6 +15,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    // 查询所有用户接口 http://localhost:8082/selectAllUser
     @GetMapping("/selectAllUser")
     public Result selectAllUser(){
         return Result.success(userService.findAllUser());
@@ -31,7 +32,7 @@ public class UserController {
         }
     }
 
-    // 根据用户名查询用户信息 http://localhost:8080/findUserByUsername?username=admin
+    // 根据用户名查询用户信息 http://localhost:8082/findUserByUsername?username=admin
     @GetMapping("/findUserByUsername")
     public Result findUserByUsername(@RequestParam String username) {
         User user = userService.findUserByUsername(username);
@@ -42,7 +43,7 @@ public class UserController {
         return Result.error("用户不存在");
     }
 
-    // 注册接口 http://localhost:8080/register
+    // 注册接口 http://localhost:8082/register
     @PostMapping("/register")
     public Result register(User user) {
         boolean success = userService.register(user);

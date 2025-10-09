@@ -20,8 +20,9 @@ public interface UserMapper {
     @Select("select * from user where username = #{username}")
     User findUserByName(@Param("username") String username);
 
+    // 注册方法
     @Insert("INSERT INTO user(username, password, nickname, phone, email, is_active, created_time) " +
             "VALUES(#{username}, #{password}, #{nickname}, #{phone}, #{email}, #{is_active}, #{created_time})")
-    int insertUser(User user);
+    int registertUser(User user);
 
 }

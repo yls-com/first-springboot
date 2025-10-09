@@ -42,6 +42,11 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>2.3.0</version> <!-- 版本可根据Spring Boot版本适配，2.3.0适配Spring Boot 2.x/3.x -->
         </dependency>
+        <!-- MD5加密 -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
