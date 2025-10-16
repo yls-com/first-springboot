@@ -21,4 +21,10 @@ public interface UserService {
     // 发送邮箱验证码
     public void sendEmailCode(String email);
 
+    // 根据邮箱修改密码
+    int updatePasswordByEmail( String email, String password);
+
+    // 判断验证码
+    boolean checkCode(String email, String code);
+
 }

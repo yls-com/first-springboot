@@ -1,10 +1,7 @@
 package com.ny.mapper;
 
 import com.ny.entity.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -28,5 +25,10 @@ public interface UserMapper {
     //根据邮箱号码查询用户是否存在
     @Select("select * from user where email = #{email}")
     User findUserByEmail(@Param("email") String email);
+
+    //根据邮箱修改密码
+    @Update("update user set password = #{password} where email = #{email}")
+    int updatePasswordByEmail(@Param("email") String email, @Param("password") String password);
+
 
 }

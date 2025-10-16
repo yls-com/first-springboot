@@ -4,10 +4,7 @@ import com.ny.entity.Result;
 import com.ny.entity.User;
 import com.ny.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
@@ -66,9 +63,28 @@ public class UserController {
     // 发送邮箱验证码 http://localhost:8082/sendEmailCode?email=<EMAIL>
     @GetMapping("/sendEmailCode")
     public Result sendEmailCode(String email){
-        userService.sendEmailCode(email);
-        return Result.success("验证码发送成功");
+        User user = userService.findUserByEmail(email);
+        if (user != null){
+            userService.sendEmailCode(email);
+            return Result.success("验证码发送成功");
+        }
+        return Result.notFound("邮箱不存在");
     }
+    // 修改密码 http://localhost:8082/updatePasswordByEmail?email=<EMAIL>&password=<PASSWORD>&code=
+    @PutMapping("/updatePasswordByEmail")
+    public Result updatePasswordByEmail(String email, String password,String code){
+        Boolean checkCode =userService.checkCode(email, code);
+        if (checkCode){
+            int i =userService.updatePasswordByEmail(email, password);
+            if (i>0){
+                return Result.success("修改成功");
+            }
+            return Result.notFound("成功获取验证码");
+        }
+        else {
+            return Result.success("验证码错误");
+        }
 
+    }
 }
 

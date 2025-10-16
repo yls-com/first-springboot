@@ -6,10 +6,13 @@ import com.ny.service.EmailService;
 import com.ny.service.UserService;
 import com.ny.until.PasswordUntil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -18,6 +21,8 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public List<User> findAllUser() {
@@ -63,17 +68,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void sendEmailCode(String email) {
-        // 检查邮箱号是否存在
-        User user = userMapper.findUserByEmail(email);
-        if (user != null){
-            //生成验证码
+
             String code = emailService.generateCode();
             // 把验证码存储到redis数据中,进行验证和过期的
-//            ValueOperations<String, String> ops = redisTemplate.opsForValue();
-//            ops.set(email, code);
+            ValueOperations<String, String> ops = redisTemplate.opsForValue();
+            ops.set(email, code,10, TimeUnit.MINUTES);
             emailService.sendEmail(email, code);
-        }
+
 
     }
+
+    @Override
+    public int updatePasswordByEmail(String email, String password) {
+        // 密码加密
+        password = PasswordUntil.encryptPassword(password);
+        //        redisTemplate.delete(email);清除redis的验证码
+        return userMapper.updatePasswordByEmail(email, password);
+    }
+    @Override
+    public boolean checkCode(String email, String code) {
+        // 从redis中获取验证码
+        ValueOperations<String, String> ops = redisTemplate.opsForValue();
+        String redisCode = ops.get(email);
+        if (redisCode != null && redisCode.equals(code)) {
+            return true;
+        }
+        return false;
+    }
+
 
 }
