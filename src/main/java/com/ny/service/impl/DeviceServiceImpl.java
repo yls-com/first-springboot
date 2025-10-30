@@ -90,6 +90,11 @@ public class DeviceServiceImpl implements DeviceService {
         return false;
     }
 
+    @Override
+    public List<Device> findByNameContaining(String name) {
+        return deviceMapper.findByNameContaining(name);
+    }
+
 
 
 

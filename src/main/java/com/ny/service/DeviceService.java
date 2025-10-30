@@ -42,4 +42,11 @@ public interface DeviceService {
      * @return 删除成功返回true，设备不存在返回false
      */
     boolean deleteDeviceById(int device_id);
+    
+    /**
+     * 根据设备名称模糊查询设备
+     * @param name 设备名称关键字
+     * @return 匹配的设备列表
+     */
+    List<Device> findByNameContaining(String name);
 }

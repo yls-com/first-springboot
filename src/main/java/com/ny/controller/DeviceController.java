@@ -119,6 +119,17 @@ public class DeviceController {
             return Result.error("设备不存在");
         }
     }
+    
+    /**
+     * 根据设备名称模糊查询设备数据
+     * @param name 设备名称关键字
+     * @return 匹配的设备列表
+     */
+    //http://localhost:8082/findDeviceByNameContaining?name=厨
+    @RequestMapping(value = "/findDeviceByNameContaining", method = {RequestMethod.GET, RequestMethod.POST})
+    public Result findDeviceByNameContaining(@RequestParam String name) {
+        return Result.success(deviceService.findByNameContaining(name));
+    }
 
 //    6节：实现查询所有的设备数据、实现根据设备名称查询设备数据
 //    7节：添加一条设备信息       根据设备id修改设备信息：比如把设备id为2的设备名称改为"灯泡"
