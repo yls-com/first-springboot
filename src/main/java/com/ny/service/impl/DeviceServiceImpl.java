@@ -14,18 +14,14 @@ public class DeviceServiceImpl implements DeviceService {
     @Autowired
     private DeviceMapper deviceMapper;
 
+
     @Override
-    public List<Device> findAllDevices() {
-        return deviceMapper.findAllDevices();
+    public List<Device> findAll() {
+        return deviceMapper.findAll();
     }
 
     @Override
-    public Device findDeviceByName(String device_name) {
-        return deviceMapper.findDeviceByName(device_name);
-    }
-
-    @Override
-    public int deleteDeviceById(Integer device_id) {
-        return deviceMapper.deleteDeviceById(device_id);
+    public List<Device> findByName(String name) {
+        return deviceMapper.findByName(name);
     }
 }
