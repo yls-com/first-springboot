@@ -1,6 +1,7 @@
 package com.ny.mapper;
 
 import com.ny.entity.Device;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

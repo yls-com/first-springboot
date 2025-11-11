@@ -13,7 +13,7 @@ public class DeviceController {
 
     @Autowired
     private DeviceService deviceService;
-    //`http://localhost:8082/findAllDevices`
+    //http://localhost:8081/findAllDevices
     @GetMapping("/findAllDevices")
     public Result findAllDevices(){
         return Result.success(deviceService.findAll());
