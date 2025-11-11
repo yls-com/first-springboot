@@ -51,7 +51,7 @@ public class UserController {
         }
     }
 
-    // 根据邮箱查询用户信息 http://localhost:8082/findUserByEmail?email=<EMAIL>
+    // 根据邮箱查询用户信息 http://localhost:8081/findUserByEmail?email=<EMAIL>
     @GetMapping("/findUserByEmail")
     public Result findUserByEmail(String email){
         User user = userService.findUserByEmail(email);
@@ -60,7 +60,7 @@ public class UserController {
         }
         return Result.error("邮箱不存在");
     }
-    // 发送邮箱验证码 http://localhost:8082/sendEmailCode?email=<EMAIL>
+    // 发送邮箱验证码 http://localhost:8081/sendEmailCode?email=<EMAIL>
     @GetMapping("/sendEmailCode")
     public Result sendEmailCode(String email){
         User user = userService.findUserByEmail(email);
@@ -70,7 +70,7 @@ public class UserController {
         }
         return Result.notFound("邮箱不存在");
     }
-    // 修改密码 http://localhost:8082/updatePasswordByEmail?email=<EMAIL>&password=<PASSWORD>&code=
+    // 修改密码 http://localhost:8081/updatePasswordByEmail?email=<EMAIL>&password=<PASSWORD>&code=
     @PutMapping("/updatePasswordByEmail")
     public Result updatePasswordByEmail(String email, String password,String code){
         Boolean checkCode =userService.checkCode(email, code);
@@ -85,6 +85,17 @@ public class UserController {
             return Result.success("验证码错误");
         }
 
+    }
+
+    // 修改昵称 http://localhost:8081/updateNickname?user_id=1&nickname=new_nickname
+    @PutMapping("/updateNickname")
+    public Result updateNickname(int user_id, String nickname) {
+        int result = userService.updateNicknameById(user_id, nickname);
+        if (result > 0) {
+            return Result.success("昵称修改成功");
+        } else {
+            return Result.error("昵称修改失败");
+        }
     }
 }
 

@@ -30,5 +30,9 @@ public interface UserMapper {
     @Update("update user set password = #{password} where email = #{email}")
     int updatePasswordByEmail(@Param("email") String email, @Param("password") String password);
 
+    // 根据用户ID修改昵称
+    @Update("update user set nickname = #{nickname} where user_id = #{user_id}")
+    int updateNicknameById(@Param("user_id") int user_id, @Param("nickname") String nickname);
+
 
 }

@@ -27,4 +27,7 @@ public interface UserService {
     // 判断验证码
     boolean checkCode(String email, String code);
 
+    // 根据用户ID修改昵称
+    int updateNicknameById(int user_id, String nickname);
+
 }

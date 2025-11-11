@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public int updatePasswordByEmail(String email, String password) {
         // 密码加密
-        password = PasswordUntil.encryptPassword(password);
+        //password = PasswordUntil.encryptPassword(password);
         //        redisTemplate.delete(email);清除redis的验证码
         return userMapper.updatePasswordByEmail(email, password);
     }
@@ -93,6 +93,11 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public int updateNicknameById(int user_id, String nickname) {
+        return userMapper.updateNicknameById(user_id, nickname);
     }
 
 
