@@ -3,14 +3,22 @@ package com.ny.controller;
 import com.ny.entity.Result;
 import com.ny.entity.User;
 import com.ny.service.UserService;
+import com.ny.until.JwtUntil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private JwtUntil jwtUntil;
+
+    private final Map<String, Object> map = new HashMap<>();
 
     // 查询所有用户接口 http://localhost:8082/selectAllUser
     @GetMapping("/selectAllUser")
@@ -18,16 +26,8 @@ public class UserController {
         return Result.success(userService.findAllUser());
     }
 
-    // 登录接口
-    @PostMapping("/login")
-    public Result login(@RequestParam String username, @RequestParam String password) {
-        User user = userService.login(username, password);
-        if (user != null) {
-            return Result.success(user);
-        } else {
-            return Result.error("用户名或密码错误");
-        }
-    }
+    // 登录接口：POST /login
+
 
     // 根据用户名查询用户信息 http://localhost:8082/findUserByUsername?username=admin
     @GetMapping("/findUserByUsername")
@@ -98,4 +98,3 @@ public class UserController {
         }
     }
 }
-

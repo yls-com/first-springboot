@@ -29,10 +29,17 @@ public class UserServiceImpl implements UserService {
         return userMapper.findAllUser();
     }
 
+    // 实现用户查询逻辑（密码MD5加密后比对）
+    @Override
+    public User findUser(String username, String password) {
+        return userMapper.findUser(username, PasswordUntil.md5(password));
+    }
+
     // 实现登录方法
     @Override
     public User login(String username, String password) {
-        return userMapper.findUser(username, password);
+        // 使用加密后的密码进行登录验证
+        return userMapper.findUser(username, PasswordUntil.md5(password));
     }
     @Override
     public User findUserByUsername(String username) {
@@ -80,7 +87,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public int updatePasswordByEmail(String email, String password) {
         // 密码加密
-        //password = PasswordUntil.encryptPassword(password);
+        password = PasswordUntil.encryptPassword(password);
         //        redisTemplate.delete(email);清除redis的验证码
         return userMapper.updatePasswordByEmail(email, password);
     }
