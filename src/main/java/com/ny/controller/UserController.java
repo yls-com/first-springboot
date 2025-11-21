@@ -40,7 +40,7 @@ public class UserController {
         return Result.error("用户不存在");
     }
 
-    // 注册接口 http://localhost:8082/register
+    // 注册接口 http://localhost:8081/register
     @PostMapping("/register")
     public Result register(User user) {
         boolean success = userService.register(user);
