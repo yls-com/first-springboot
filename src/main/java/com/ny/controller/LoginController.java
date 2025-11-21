@@ -27,6 +27,7 @@ public class LoginController {
     private final Map<String, Object> map = new HashMap<>();
 
     // 登录接口：POST /login
+    //http://localhost:8081/login?username=admin&password=<PASSWORD>
     @PostMapping("/login")
     public Result login(String username, String password) {
         User user = userService.findUser(username, password);
