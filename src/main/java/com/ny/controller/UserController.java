@@ -20,7 +20,7 @@ public class UserController {
 
     private final Map<String, Object> map = new HashMap<>();
 
-    // 查询所有用户接口 http://localhost:8082/selectAllUser
+    // 查询所有用户接口 http://localhost:8081/selectAllUser
     @GetMapping("/selectAllUser")
     public Result selectAllUser(){
         return Result.success(userService.findAllUser());
