@@ -87,7 +87,7 @@ public class UserController {
 
     }
 
-    // 修改昵称 http://localhost:8081/updateNickname?user_id=1&nickname=new_nickname
+    // 修改昵称 http://localhost:8081/updateNickname?user_id=1&nickname=
     @PutMapping("/updateNickname")
     public Result updateNickname(int user_id, String nickname) {
         int result = userService.updateNicknameById(user_id, nickname);
