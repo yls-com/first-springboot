@@ -29,7 +29,7 @@ public class UserController {
     // 登录接口：POST /login
 
 
-    // 根据用户名查询用户信息 http://localhost:8082/findUserByUsername?username=admin
+    // 根据用户名查询用户信息 http://localhost:8081/findUserByUsername?username=admin
     @GetMapping("/findUserByUsername")
     public Result findUserByUsername(@RequestParam String username) {
         User user = userService.findUserByUsername(username);
