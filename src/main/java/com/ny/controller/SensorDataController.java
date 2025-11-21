@@ -23,7 +23,7 @@ public class SensorDataController {
     /**
      * 获取最新传感器数据的接口
      * 请求方式：GET
-     * 访问路径：http://localhost:8080/sensor-data
+     * 访问路径：http://localhost:8081/sensor-data
      * @return 传感器数据对象（自动转为JSON）
      */
     @GetMapping("/sensor-data")
