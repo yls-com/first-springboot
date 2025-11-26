@@ -2,6 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <!-- 关键修复：添加Spring Boot父工程，确保版本解析不失败 -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.13</version> <!-- 复用已有版本变量 -->
+        <relativePath/> <!-- 从中央仓库拉取，避免本地路径问题 -->
+    </parent>
+
     <groupId>com.example</groupId>
     <artifactId>new_iot20220217079</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -12,25 +21,24 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-boot.version>2.6.13</spring-boot.version>
-        <!-- 统一管理非Spring Boot Starter的依赖版本（方便后续维护） -->
+        <!-- 统一管理非Spring Boot Starter的依赖版本 -->
         <mybatis-spring-boot.version>2.3.0</mybatis-spring-boot.version>
         <mysql-connector.version>8.0.33</mysql-connector.version>
         <commons-codec.version>1.15</commons-codec.version>
         <jjwt.version>0.11.5</jjwt.version>
         <paho-mqtt.version>1.2.5</paho-mqtt.version>
-        <spring-integration-mqtt.version>5.5.15</spring-integration-mqtt.version> <!-- 适配Spring Boot 2.6.x -->
+        <spring-integration-mqtt.version>5.5.15</spring-integration-mqtt.version>
         <huawei-iot-sdk.version>1.2.2</huawei-iot-sdk.version>
     </properties>
 
     <dependencies>
-        <!-- Web Starter（Spring MVC核心） -->
+        <!-- Web Starter（无需写version） -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <!-- 无需写version：dependencyManagement已通过spring-boot-dependencies管理 -->
         </dependency>
 
-        <!-- Lombok（仅保留1个，避免重复） -->
+        <!-- Lombok（仅1个，无重复） -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -59,7 +67,7 @@
             <version>${mybatis-spring-boot.version}</version>
         </dependency>
 
-        <!-- MD5加密（commons-codec） -->
+        <!-- MD5加密 -->
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
@@ -84,7 +92,7 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
 
-        <!-- JWT依赖（jjwt） -->
+        <!-- JWT依赖 -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -103,14 +111,14 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- MQTT客户端核心依赖（Paho） -->
+        <!-- MQTT客户端核心依赖 -->
         <dependency>
             <groupId>org.eclipse.paho</groupId>
             <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
             <version>${paho-mqtt.version}</version>
         </dependency>
 
-        <!-- Spring集成MQTT（版本适配Spring Boot 2.6.x） -->
+        <!-- Spring集成MQTT -->
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-mqtt</artifactId>
@@ -131,7 +139,7 @@
         </dependency>
     </dependencies>
 
-    <!-- 依赖管理：统一控制Spring Boot相关依赖版本 -->
+    <!-- 保留dependencyManagement（兼容已有配置，不冲突） -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -146,7 +154,7 @@
 
     <build>
         <plugins>
-            <!-- 编译插件：指定JDK版本和编码 -->
+            <!-- 编译插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -158,14 +166,13 @@
                 </configuration>
             </plugin>
 
-            <!-- Spring Boot打包插件（修复skip=true问题） -->
+            <!-- Spring Boot打包插件 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>com.ny.NewIot20220217079Application</mainClass>
-                    <!-- 移除skip=true：否则无法打包成可运行Jar -->
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
