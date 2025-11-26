@@ -99,6 +99,20 @@
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-mqtt</artifactId>
         </dependency>
+
+        <!-- 华为云依赖-->
+        <dependency>
+            <groupId>com.huaweicloud</groupId>
+            <artifactId>iot-device-sdk-java</artifactId>
+            <version>1.2.2</version>
+            <exclusions>
+                <!-- 排除 slf4j-simple -->
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

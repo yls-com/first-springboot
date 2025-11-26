@@ -1,60 +1,58 @@
 package com.ny.entity;
 
-/**
- * 传感器数据实体类，用于封装温度、湿度、LED状态数据
- * 作为数据传输的载体，被服务层和控制层共享
- */
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import java.util.Date;
+
+@Document(collection = "sensor_data")
 public class SensorData {
-    // 温度（double类型，支持小数）
-    private double temperature;
-    // 湿度（int类型，整数）
-    private int humi;
-    // LED状态（int类型，通常0表示关闭，1表示开启）
-    private int led;
+    @Id
+    private String id;
 
-    // 无参构造方法（JSON反序列化、Spring实例化必需）
-    public SensorData() {
-    }
+    // 实体类属性名为 device_id，数据库字段名也为 device_id
+    @Field("device_id")
+    private String device_id;
 
-    // 全参构造方法，用于快速创建对象
-    public SensorData(double temperature, int humi, int led) {
+    @Field("temperature")
+    private Double temperature;
+
+    @Field("humidity")
+    private Double humidity;
+
+    @Field("ledStatus")
+    private Boolean ledStatus;
+
+    @Field("time")
+    private Date time;
+
+    // 构造方法、getter、setter
+    public SensorData() {}
+
+    public SensorData(String device_id, Double temperature, Double humidity, Boolean ledStatus, Date time) {
+        this.device_id = device_id;
         this.temperature = temperature;
-        this.humi = humi;
-        this.led = led;
+        this.humidity = humidity;
+        this.ledStatus = ledStatus;
+        this.time = time;
     }
 
-    // Getter/Setter方法：用于属性的读写（封装性体现）
-    public double getTemperature() {
-        return temperature;
-    }
+    // Getter 和 Setter 方法
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public void setTemperature(double temperature) {
-        this.temperature = temperature;
-    }
+    public String getDevice_id() { return device_id; }
+    public void setDevice_id(String device_id) { this.device_id = device_id; }
 
-    public int getHumi() {
-        return humi;
-    }
+    public Double getTemperature() { return temperature; }
+    public void setTemperature(Double temperature) { this.temperature = temperature; }
 
-    public void setHumi(int humi) {
-        this.humi = humi;
-    }
+    public Double getHumidity() { return humidity; }
+    public void setHumidity(Double humidity) { this.humidity = humidity; }
 
-    public int getLed() {
-        return led;
-    }
+    public Boolean getLedStatus() { return ledStatus; }
+    public void setLedStatus(Boolean ledStatus) { this.ledStatus = ledStatus; }
 
-    public void setLed(int led) {
-        this.led = led;
-    }
-
-    // 重写toString方法：方便日志打印时查看对象内容
-    @Override
-    public String toString() {
-        return "SensorData{" +
-                "temperature=" + temperature +
-                ", humi=" + humi +
-                ", led=" + led +
-                '}';
-    }
+    public Date getTime() { return time; }
+    public void setTime(Date time) { this.time = time; }
 }

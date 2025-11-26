@@ -6,6 +6,7 @@ import com.ny.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,7 @@ public class DeviceController {
      * @param name 设备名称
      * @return 设备列表
      */
-    //http://localhost:8082/findDeviceByName?name=<设备名称>
+    //http://localhost:8081/findDeviceByName?name=<设备名称>
     @GetMapping("/findDeviceByName")
     public Result findDeviceByName(@RequestParam String name){
         return Result.success(deviceService.findByName(name));
@@ -40,7 +41,7 @@ public class DeviceController {
      * @param room 房间名称
      * @return 添加结果
      */
-    //http://localhost:8082/addDevice
+    //http://localhost:8081/addDevice
     @PostMapping("/addDevice")
     public Result addDevice(@RequestParam int device_id,
                             @RequestParam String name,
@@ -61,6 +62,35 @@ public class DeviceController {
     }
 
     /**
+     * 批量添加设备信息
+     * @param devices 设备列表
+     * @return 添加结果
+     */
+//http://localhost:8081/batchAddDevices
+    @PostMapping("/batchAddDevices")
+    public Result batchAddDevices(@RequestBody List<Device> devices) {
+        if (devices == null || devices.isEmpty()) {
+            return Result.error("设备列表不能为空");
+        }
+
+        List<Device> savedDevices = new ArrayList<>();
+        for (Device device : devices) {
+            // 设置安装时间为当前时间
+            device.setInstall_time(new java.util.Date());
+            Device savedDevice = deviceService.addDevice(device);
+            if (savedDevice != null) {
+                savedDevices.add(savedDevice);
+            }
+        }
+
+        if (savedDevices.size() == devices.size()) {
+            return Result.success(savedDevices);
+        } else {
+            return Result.error("部分设备添加失败");
+        }
+    }
+
+    /**
      * 根据设备ID修改设备信息
      * @param device_id 设备ID
      * @param name 新的设备名称（可选）
@@ -70,7 +100,7 @@ public class DeviceController {
      * @param room 新的房间名称（可选）
      * @return 更新后的设备信息
      */
-    //http://localhost:8082/updateDeviceById
+    //http://localhost:8081/updateDeviceById
     @PostMapping("/updateDeviceById")
     public Result updateDeviceById(@RequestParam int device_id,
                                    @RequestParam(required = false) String name,
@@ -109,7 +139,7 @@ public class DeviceController {
      * @param device_id 设备ID
      * @return 删除结果
      */
-    //http://localhost:8082/deleteDeviceById?device_id=2
+    //http://localhost:8081/deleteDeviceById?device_id=2
     @DeleteMapping("/deleteDeviceById")
     public Result deleteDeviceById(@RequestParam int device_id) {
         boolean deleted = deviceService.deleteDeviceById(device_id);
@@ -125,7 +155,7 @@ public class DeviceController {
      * @param name 设备名称关键字
      * @return 匹配的设备列表
      */
-    //http://localhost:8082/findDeviceByNameContaining?name=厨
+    //http://localhost:8081/findDeviceByNameContaining?name=厨
     @RequestMapping(value = "/findDeviceByNameContaining", method = {RequestMethod.GET, RequestMethod.POST})
     public Result findDeviceByNameContaining(@RequestParam String name) {
         return Result.success(deviceService.findByNameContaining(name));

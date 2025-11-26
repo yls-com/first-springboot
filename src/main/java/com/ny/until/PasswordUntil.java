@@ -13,6 +13,11 @@ public class PasswordUntil {
     }
     // 对密码进行MD5加密
     public static String md5(String password) {
+        // 检查密码是否为空
+        if (password == null) {
+            return null;
+        }
+        
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] bytes = md.digest(password.getBytes());

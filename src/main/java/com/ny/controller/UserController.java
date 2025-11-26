@@ -5,6 +5,7 @@ import com.ny.entity.User;
 import com.ny.service.UserService;
 import com.ny.until.JwtUntil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -17,6 +18,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private JwtUntil jwtUntil;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     private final Map<String, Object> map = new HashMap<>();
 
@@ -27,6 +30,42 @@ public class UserController {
     }
 
     // 登录接口：POST /login
+    // 支持两种方式：
+    // 1. JSON请求体: POST http://localhost:8081/login
+    //    Body: {"username": "admin", "password": "123456"}
+    // 2. 表单参数: POST http://localhost:8081/login?username=admin&password=123456
+    @PostMapping("/login")
+    public Result login(@RequestBody(required = false) Map<String, String> credentials,
+                        @RequestParam(required = false) String username,
+                        @RequestParam(required = false) String password) {
+        // 判断使用哪种方式传递参数
+        String uname, pwd;
+        if (credentials != null && !credentials.isEmpty()) {
+            // JSON请求体方式
+            uname = credentials.get("username");
+            pwd = credentials.get("password");
+        } else {
+            // 查询参数方式
+            uname = username;
+            pwd = password;
+        }
+        
+        // 检查用户名和密码是否为空
+        if (uname == null || pwd == null) {
+            return Result.error("用户名和密码不能为空");
+        }
+        
+        User user = userService.findUser(uname, pwd);
+        if (user != null) {
+            String token = jwtUntil.generateToken(user.getUsername());
+            jwtUntil.storeToken(token, user.getUsername());
+            map.put("token", token);
+            map.put("users", user);
+            return Result.success(map);
+        } else {
+            return Result.error("用户名和密码错误");
+        }
+    }
 
 
     // 根据用户名查询用户信息 http://localhost:8081/findUserByUsername?username=admin

@@ -32,6 +32,9 @@ public class UserServiceImpl implements UserService {
     // 实现用户查询逻辑（密码MD5加密后比对）
     @Override
     public User findUser(String username, String password) {
+        if (password == null) {
+            return null; // 如果密码为空，直接返回null
+        }
         return userMapper.findUser(username, PasswordUntil.md5(password));
     }
 
