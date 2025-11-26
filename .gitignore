@@ -31,3 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
+!new_iot2022021707-0.0.1-SNAPSHOT.jar  # 允许根目录的这个jar被提交
