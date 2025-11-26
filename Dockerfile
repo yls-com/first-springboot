@@ -1,15 +1,20 @@
-# 改用AdoptOpenJDK的公开Java 8镜像（无需授权，全球可访问）
-FROM adoptopenjdk:8-jdk-hotspot
+# 使用官方 OpenJDK 8 镜像作为基础镜像
+FROM openjdk:8-jdk-alpine
 
-# 创建临时目录（Spring Boot 运行需要）
-VOLUME /tmp
+# 安装 Maven
+RUN apk add --no-cache maven
 
-# 将打包后的 jar 文件复制到容器中，并重命名为 app.jar（简化命令）
-# 注意：这里的 jar 文件名要和你项目打包后的一致！
-# 示例 jar 名：first-springboot-0.0.1-SNAPSHOT.jar（根据你的实际情况修改）
-# 直接从项目根目录复制jar，无需target目录
-COPY ./app.jar app.jar
+# 设置工作目录
+WORKDIR /app
 
+# 复制所有源代码和配置文件
+COPY . .
 
-# 容器启动时执行的命令（启动 Spring Boot 项目）
-ENTRYPOINT ["java","-jar","/app.jar"]
+# 构建应用
+RUN mvn clean package -DskipTests
+
+# 暴露端口
+EXPOSE 8081
+
+# 运行应用
+ENTRYPOINT ["java","-jar","target/new_iot20220217079-0.0.1-SNAPSHOT.jar"]
