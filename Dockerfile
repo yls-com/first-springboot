@@ -1,6 +1,5 @@
-# 基础镜像：使用轻量的 Java 8 环境（适配 Spring Boot 项目）
-# 替换为腾讯云维护的Java 8镜像（稳定可用）
-FROM ccr.ccs.tencentyun.com/mirrors/openjdk:8u382-jdk-slim
+# 改用AdoptOpenJDK的公开Java 8镜像（无需授权，全球可访问）
+FROM adoptopenjdk:8-jdk-hotspot
 
 # 创建临时目录（Spring Boot 运行需要）
 VOLUME /tmp
