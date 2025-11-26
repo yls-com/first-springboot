@@ -12,107 +12,117 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-boot.version>2.6.13</spring-boot.version>
+        <!-- 统一管理非Spring Boot Starter的依赖版本（方便后续维护） -->
+        <mybatis-spring-boot.version>2.3.0</mybatis-spring-boot.version>
+        <mysql-connector.version>8.0.33</mysql-connector.version>
+        <commons-codec.version>1.15</commons-codec.version>
+        <jjwt.version>0.11.5</jjwt.version>
+        <paho-mqtt.version>1.2.5</paho-mqtt.version>
+        <spring-integration-mqtt.version>5.5.15</spring-integration-mqtt.version> <!-- 适配Spring Boot 2.6.x -->
+        <huawei-iot-sdk.version>1.2.2</huawei-iot-sdk.version>
     </properties>
+
     <dependencies>
+        <!-- Web Starter（Spring MVC核心） -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <!-- 无需写version：dependencyManagement已通过spring-boot-dependencies管理 -->
         </dependency>
 
+        <!-- Lombok（仅保留1个，避免重复） -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <!-- 测试 Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- MySQL 驱动：连接MySQL数据库 -->
+
+        <!-- MySQL 驱动 -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>8.0.33</version>
-            <scope>runtime</scope> <!-- 运行时生效，无需编译依赖 -->
+            <version>${mysql-connector.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
-        <!-- MyBatis整合Spring Boot：简化Mapper开发 -->
+        <!-- MyBatis整合Spring Boot -->
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>2.3.0</version> <!-- 版本可根据Spring Boot版本适配，2.3.0适配Spring Boot 2.x/3.x -->
+            <version>${mybatis-spring-boot.version}</version>
         </dependency>
-        <!-- MD5加密 -->
+
+        <!-- MD5加密（commons-codec） -->
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.15</version>
+            <version>${commons-codec.version}</version>
         </dependency>
-        <!-- 邮箱 -->
+
+        <!-- 邮箱 Starter（无需写version） -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
-            <version>2.6.13</version>
         </dependency>
-        <!-- Redis -->
+
+        <!-- Redis Starter（无需写version） -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
-            <version>2.6.13</version>
         </dependency>
-        <!-- MongoDB 依赖 -->
+
+        <!-- MongoDB Starter（无需写version） -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
-            <version>2.6.13</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <!-- JWT -->
+        <!-- JWT依赖（jjwt） -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
-            <version>0.11.5</version>
+            <version>${jjwt.version}</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
-            <version>0.11.5</version>
+            <version>${jjwt.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
-            <version>0.11.5</version>
+            <version>${jjwt.version}</version>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- MQTT客户端核心依赖（Paho库） -->
+        <!-- MQTT客户端核心依赖（Paho） -->
         <dependency>
             <groupId>org.eclipse.paho</groupId>
             <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-            <version>1.2.5</version> <!-- 推荐使用最新稳定版，如1.2.5或更高 -->
+            <version>${paho-mqtt.version}</version>
         </dependency>
 
-        <!-- Spring集成MQTT的辅助依赖（提供与Spring框架的整合支持） -->
+        <!-- Spring集成MQTT（版本适配Spring Boot 2.6.x） -->
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-mqtt</artifactId>
-            <version>5.5.1</version>
+            <version>${spring-integration-mqtt.version}</version>
         </dependency>
 
-        <!-- 华为云依赖-->
+        <!-- 华为云IoT设备SDK -->
         <dependency>
             <groupId>com.huaweicloud</groupId>
             <artifactId>iot-device-sdk-java</artifactId>
-            <version>1.2.2</version>
+            <version>${huawei-iot-sdk.version}</version>
             <exclusions>
-                <!-- 排除 slf4j-simple -->
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-simple</artifactId>
@@ -120,6 +130,8 @@
             </exclusions>
         </dependency>
     </dependencies>
+
+    <!-- 依赖管理：统一控制Spring Boot相关依赖版本 -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -134,23 +146,32 @@
 
     <build>
         <plugins>
+            <!-- 编译插件：指定JDK版本和编码 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>UTF-8</encoding>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
+
+            <!-- Spring Boot打包插件（修复skip=true问题） -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>com.ny.NewIot20220217079Application</mainClass>
-                    <skip>true</skip>
+                    <!-- 移除skip=true：否则无法打包成可运行Jar -->
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
