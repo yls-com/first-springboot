@@ -2,11 +2,11 @@ package com.ny.service;
 
 import com.huaweicloud.sdk.iot.device.IoTDevice;
 import com.huaweicloud.sdk.iot.device.client.requests.ServiceProperty;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
