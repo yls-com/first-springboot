@@ -1,5 +1,5 @@
-# 使用官方 OpenJDK 8 镜像作为基础镜像
-FROM openjdk:8-jdk-alpine
+# 使用 Eclipse Temurin 8 JDK 镜像作为基础镜像
+FROM eclipse-temurin:8-jdk-alpine
 
 # 安装 Maven
 RUN apk add --no-cache maven
