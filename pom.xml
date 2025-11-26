@@ -169,17 +169,11 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <!-- 1. 强制指定JDK的javac.exe绝对路径（已匹配你的JDK路径） -->
-                    <executable>C:\Users\玉林仕\.jdks\jbrsdk_jcef-17.0.14\bin\javac.exe</executable>
-                    <!-- 2. 编译版本与JDK一致 -->
+                    <!-- 1. 编译版本与JDK一致 -->
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
-                    <!-- 3. 关键参数：强制启用独立进程编译（绕开系统环境变量问题） -->
-                    <fork>true</fork>
-                    <!-- 4. 明确编译器版本 -->
-                    <compilerVersion>${java.version}</compilerVersion>
-                    <!-- 5. 传递JVM参数（增强兼容性） -->
+                    <!-- 2. 传递JVM参数（增强兼容性） -->
                     <compilerArgs>
                         <arg>-J-Dhttps.protocols=TLSv1.2</arg>
                     </compilerArgs>
@@ -192,8 +186,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version> <!-- 与报错的插件版本一致，避免冲突 -->
                 <configuration>
-                    <!-- 强制测试用JDK的java.exe路径（与编译用JDK一致） -->
-                    <jvm>C:\Users\玉林仕\.jdks\jbrsdk_jcef-17.0.14\bin\java.exe</jvm>
                     <!-- 兼容JDK 17的模块访问限制，避免反射报错 -->
                     <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
                     <!-- 可选：若测试代码本身有问题，可暂时开启跳过测试（注释掉则执行测试） -->
@@ -214,8 +206,6 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                    <!-- 兼容JDK 17的打包参数，避免模块访问限制 -->
-                    <jvmArguments>--add-opens java.base/java.lang=ALL-UNNAMED</jvmArguments>
                 </configuration>
                 <executions>
                     <execution>
