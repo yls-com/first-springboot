@@ -10,14 +10,12 @@ WORKDIR /app
 # 复制 Maven 配置文件，利用 Docker 层缓存
 COPY pom.xml .
 COPY mvnw .
-COPY .mvn .mvn
 
 # 下载依赖但不编译代码，充分利用缓存
 RUN mvn dependency:go-offline -B
 
 # 复制所有源代码和配置文件
 COPY src src
-COPY src/main/resources src/main/resources
 
 # 构建应用
 RUN mvn clean package -DskipTests
