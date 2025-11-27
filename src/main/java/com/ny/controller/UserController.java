@@ -57,9 +57,7 @@ public class UserController {
         
         User user = userService.findUser(uname, pwd);
         if (user != null) {
-            String token = jwtUntil.generateToken(user.getUsername());
-            jwtUntil.storeToken(token, user.getUsername());
-            map.put("token", token);
+            // 简化登录逻辑，直接返回用户信息（已移除Token）
             map.put("users", user);
             return Result.success(map);
         } else {
