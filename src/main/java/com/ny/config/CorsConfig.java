@@ -15,6 +15,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         // 允许前端域名访问（* 表示允许所有，生产环境建议指定具体域名）
         config.addAllowedOriginPattern("*");
+        config.addAllowedOriginPattern("https://yls-com.github.io");
         // 允许跨域请求携带 cookie
         config.setAllowCredentials(true);
         // 允许的请求方法（GET、POST、PUT 等）
