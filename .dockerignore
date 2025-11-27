@@ -1,10 +1,11 @@
 target/
-Dockerfile
-.dockerignore
+!target/*.jar
 .git
 .gitignore
 README.md
+Dockerfile
+.dockerignore
 HELP.md
-.mvn
 mvnw
 mvnw.cmd
+.mvn

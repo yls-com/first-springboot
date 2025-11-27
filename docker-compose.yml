@@ -12,11 +12,19 @@ services:
       - SPRING_MAIL_USERNAME=1613302001@qq.com
       - SPRING_MAIL_PASSWORD=nxcxerihyqqbdahd
       - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/home_devices
+      # Render 部署相关配置
+      - PORT=8081
     depends_on:
       - mysql
       - mongo
     networks:
       - app-network
+    # 添加健康检查
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/findAllDevices"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   mysql:
     image: mysql:8.0
@@ -29,6 +37,8 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - app-network
+    # MySQL 优化配置
+    command: --default-authentication-plugin=mysql_native_password --explicit_defaults_for_timestamp=true
 
   mongo:
     image: mongo:latest
