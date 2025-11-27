@@ -2,6 +2,7 @@ package com.ny.interceptor;
 
 import com.ny.until.JwtUntil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -20,6 +21,10 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Resource
     private JwtUntil jwtUtil; // 注入你的JWT工具类（已实现完整逻辑）
+    
+    // 配置是否严格验证Redis中的Token（用于降级方案）
+    @Value("${TOKEN_STRICT_REDIS_CHECK:true}")
+    private boolean tokenStrictRedisCheck;
 
     // 请求处理前拦截（核心逻辑：先放行登录/注册，再验证其他接口Token）
     @Override
@@ -36,18 +41,42 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         // 3. 其他接口：验证Token是否有效
         String token = request.getHeader("token");
-        log.info("当前请求头中的Token：{}", token);
+        log.debug("当前请求头中的Token：{}", token);
 
         // 验证Token存在且合法（调用你已实现的 jwtUtil.validateToken 方法）
         if (token != null && jwtUtil.validateToken(token)) {
-            // 可选：额外验证Redis中是否存在该Token（防止注销后Token仍可用）
-            String username = jwtUtil.getUsernameFromToken(token);
-            String redisToken = jwtUtil.getToken(username);
-            if (token.equals(redisToken)) {
-                log.info("Token验证通过（Redis中存在有效Token），放行请求：{}", requestUri);
+            try {
+                // 从Token中提取用户名
+                String username = jwtUtil.getUsernameFromToken(token);
+                if (username != null) {
+                    // 根据配置决定是否严格检查Redis中的Token
+                    if (!tokenStrictRedisCheck) {
+                        // 非严格模式下，只验证Token本身的有效性
+                        log.info("非严格模式：Token验证通过，放行请求：{}", requestUri);
+                        return true;
+                    }
+                    
+                    // 严格模式：验证Redis或本地缓存中是否存在该Token
+                    String storedToken = jwtUtil.getToken(username);
+                    if (storedToken != null && token.equals(storedToken)) {
+                        log.info("Token验证通过（存储中存在有效Token），放行请求：{}", requestUri);
+                        return true;
+                    } else if (storedToken == null) {
+                        // 如果存储的Token为null，可能是Redis不可用但使用了本地缓存
+                        // 允许通过，因为JWT本身已经验证通过
+                        log.warn("未在存储中找到Token，但JWT验证通过，放行请求：{}", requestUri);
+                        return true;
+                    } else {
+                        log.warn("Token已失效（存储中Token不匹配），拒绝请求：{}", requestUri);
+                    }
+                } else {
+                    log.warn("无法从Token中提取用户名，拒绝请求：{}", requestUri);
+                }
+            } catch (Exception e) {
+                // 发生异常时，为了保持系统可用性，允许基于JWT本身的验证通过
+                log.error("Token验证过程中发生异常：{}", e.getMessage());
+                log.warn("降级处理：基于JWT本身验证通过，放行请求：{}", requestUri);
                 return true;
-            } else {
-                log.warn("Token已失效（Redis中无对应记录），拒绝请求：{}", requestUri);
             }
         } else {
             log.warn("Token无效或未携带Token，拒绝请求：{}", requestUri);

@@ -29,6 +29,14 @@ services:
         fromDatabase:
           name: mongodb
           property: connectionString
+      - key: HUAWEI_IOT_DEVICE_SECRET
+        value: yls16133
+      - key: REDIS_ENABLED
+        value: false
+      - key: TOKEN_REDIS_CHECK_ENABLED
+        value: false
+      - key: TOKEN_STRICT_REDIS_CHECK
+        value: false
 
   # MySQL Database
   - type: pserv
