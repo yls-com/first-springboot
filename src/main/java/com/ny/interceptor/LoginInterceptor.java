@@ -29,8 +29,8 @@ public class LoginInterceptor implements HandlerInterceptor {
         log.info("拦截到请求：{}", requestUri);
 
         // 2. 手动放行 /login 和 /register 接口（无需验证Token）
-        if ("/login".equals(requestUri) || "/register".equals(requestUri)) {
-            log.info("请求 {} 为登录/注册接口，直接放行", requestUri);
+        if ("/login".equals(requestUri) || "/register".equals(requestUri) || "/error".equals(requestUri)) {
+            log.info("请求 {} 为放行接口，直接放行", requestUri);
             return true;
         }
 
