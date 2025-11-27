@@ -13,8 +13,24 @@ services:
         value: production
       - key: JAVA_OPTS
         value: -Xmx512m -Xms256m
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: mysql-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: mysql-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: mysql-db
+          property: password
+      - key: SPRING_DATA_MONGODB_URI
+        fromDatabase:
+          name: mongodb
+          property: connectionString
 
-  # MySQL Database (如果使用 Render 的数据库服务)
+  # MySQL Database
   - type: pserv
     name: mysql-db
     env: docker
@@ -30,7 +46,7 @@ services:
       - key: MYSQL_DATABASE
         value: new_iot
 
-  # MongoDB Database (如果使用 Render 的数据库服务)
+  # MongoDB Database
   - type: pserv
     name: mongodb
     env: docker
@@ -40,3 +56,6 @@ services:
       name: mongo-data
       mountPath: /data/db
       sizeGB: 10
+    envVars:
+      - key: MONGO_INITDB_DATABASE
+        value: home_devices
