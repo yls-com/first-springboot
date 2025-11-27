@@ -6,6 +6,5 @@ README.md
 Dockerfile
 .dockerignore
 HELP.md
-mvnw
-mvnw.cmd
+
 .mvn
