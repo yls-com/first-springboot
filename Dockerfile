@@ -9,7 +9,6 @@ WORKDIR /app
 
 # 复制 Maven 配置文件，利用 Docker 层缓存
 COPY pom.xml .
-COPY .mvn .mvn
 COPY mvnw .
 
 # 下载依赖但不编译代码，充分利用缓存
