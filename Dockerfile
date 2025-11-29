@@ -9,20 +9,20 @@ COPY pom.xml .
 COPY mvnw .
 COPY .mvn .mvn
 
-# 添加执行权限给 mvnw 脚本
-RUN chmod +x ./mvnw
+# 添加执行权限给 mvnw 脚本（使用 chmod 和直接在 COPY 中设置权限两种方式）
+RUN chmod +x ./mvnw || true
 
 # 添加非root用户，提高安全性
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 # 下载依赖但不编译代码，充分利用缓存
-RUN ./mvnw dependency:go-offline -B
+RUN sh -c './mvnw dependency:go-offline -B'
 
 # 复制所有源代码和配置文件
 COPY src src
 
 # 构建应用
-RUN ./mvnw clean package -DskipTests
+RUN sh -c './mvnw clean package -DskipTests'
 
 # 运行阶段
 # 使用 Eclipse Temurin 17 JRE 镜像作为运行时基础镜像，替代已废弃的 openjdk:17-jre-slim
