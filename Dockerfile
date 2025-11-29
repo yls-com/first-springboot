@@ -10,7 +10,7 @@ WORKDIR /app
 # 复制 Maven 配置文件，利用 Docker 层缓存
 COPY pom.xml .
 COPY mvnw .
-COPY .mvn .mvn
+COPY --from=builder .mvn .mvn
 
 # 添加非root用户，提高安全性
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
