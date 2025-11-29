@@ -5,54 +5,101 @@ services:
     build: .
     ports:
       - "8081:8081"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/new_iot?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=rootpassword
-      - SPRING_MAIL_USERNAME=1613302001@qq.com
-      - SPRING_MAIL_PASSWORD=nxcxerihyqqbdahd
-      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/home_devices
-      # Render 部署相关配置
-      - PORT=8081
+    env_file:
+      - .env
     depends_on:
-      - mysql
-      - mongo
+      mysql:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
     networks:
       - app-network
-    # 添加健康检查
+    # 添加健康检查，使用Actuator的健康检查端点
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/findAllDevices"]
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 60s
+    # 添加资源限制
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          memory: 512M
+    # 添加重启策略
+    restart: unless-stopped
 
   mysql:
-    image: mysql:8.0
+    image: mysql:8.0.33
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: new_iot
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-new_iot}
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      # 添加初始化脚本目录
+      - ./mysql-init:/docker-entrypoint-initdb.d:ro
     networks:
       - app-network
     # MySQL 优化配置
-    command: --default-authentication-plugin=mysql_native_password --explicit_defaults_for_timestamp=true
+    command: >
+      --default-authentication-plugin=mysql_native_password 
+      --explicit_defaults_for_timestamp=true
+      --innodb_buffer_pool_size=256M
+      --max_connections=100
+    # 添加健康检查
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # 添加资源限制
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    restart: unless-stopped
 
   mongo:
-    image: mongo:latest
+    image: mongo:6.0
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
     networks:
       - app-network
+    # MongoDB 优化配置
+    command: mongod --wiredTigerCacheSizeGB 0.25
+    # 添加健康检查
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # 添加资源限制
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    restart: unless-stopped
 
 networks:
   app-network:
     driver: bridge
+    # 添加网络配置
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
 
 volumes:
   mysql_data:
+    driver: local
   mongo_data:
+    driver: local

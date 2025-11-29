@@ -49,4 +49,11 @@ public interface DeviceService {
      * @return 匹配的设备列表
      */
     List<Device> findByNameContaining(String name);
+
+    /**
+     * 根据设备ID获取设备
+     * @param device_id 设备ID
+     * @return 设备对象
+     */
+    Device getDeviceById(int device_id);
 }

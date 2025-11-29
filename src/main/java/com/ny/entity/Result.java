@@ -3,17 +3,24 @@ package com.ny.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.Serializable;
 
 @Data  // Lombok自动生成getter/setter，不用手动写
 @NoArgsConstructor  // 无参构造（JSON序列化必须，否则前端解析会报错）
 @AllArgsConstructor // 全参构造（静态方法里直接用）
+@Schema(description = "统一响应结果实体类")
 public class Result implements Serializable {
     // 状态码：对齐API文档的HTTP标准（200=成功，400=失败，401=未登录，404=资源不存在）
+    @Schema(description = "状态码")
     private Integer code;
+    
+    @Schema(description = "响应消息")
     private String msg;
+    
     // Object类型：承载所有业务数据（登录信息、用户信息、设备列表等）
+    @Schema(description = "响应数据")
     private Object data;
 
 

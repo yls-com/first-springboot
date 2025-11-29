@@ -110,5 +110,16 @@ public class UserServiceImpl implements UserService {
         return userMapper.updateNicknameById(user_id, nickname);
     }
 
+    @Override
+    public boolean verifyPassword(String rawPassword, String encodedPassword) {
+        return PasswordUntil.md5(rawPassword).equals(encodedPassword);
+    }
+
+    @Override
+    public User findById(int id) {
+        // 实现根据ID查找用户的方法
+        return userMapper.findUserById(id);
+    }
+
 
 }

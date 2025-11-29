@@ -95,6 +95,17 @@ public class DeviceServiceImpl implements DeviceService {
         return deviceMapper.findByNameContaining(name);
     }
 
+    @Override
+    public Device getDeviceById(int device_id) {
+        List<Device> devices = deviceMapper.findAll();
+        for (Device device : devices) {
+            if (device.getDevice_id() == device_id) {
+                return device;
+            }
+        }
+        return null;
+    }
+
 
 
 

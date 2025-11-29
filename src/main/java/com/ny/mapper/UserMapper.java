@@ -34,5 +34,9 @@ public interface UserMapper {
     @Update("update user set nickname = #{nickname} where user_id = #{user_id}")
     int updateNicknameById(@Param("user_id") int user_id, @Param("nickname") String nickname);
 
+    // 根据用户ID查询用户
+    @Select("select * from user where user_id = #{id}")
+    User findUserById(@Param("id") int id);
+
 
 }

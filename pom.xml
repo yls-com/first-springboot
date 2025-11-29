@@ -15,22 +15,28 @@
     <artifactId>new_iot20220217079</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>new_iot20220217079</name>
-    <description>new_iot20220217079</description>
+    <description>IoT设备管理系统</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-boot.version>3.2.0</spring-boot.version>
-        <!-- 统一管理依赖版本 -->
+        <!-- 统一管理依赖版本，确保与Spring Boot 3.2.0兼容 -->
         <mybatis-spring-boot.version>3.0.3</mybatis-spring-boot.version>
-        <mysql-connector.version>8.0.33</mysql-connector.version>
-        <commons-codec.version>1.15</commons-codec.version>
-        <jjwt.version>0.11.5</jjwt.version>
+        <mysql-connector.version>8.3.0</mysql-connector.version>
+        <commons-codec.version>1.17.1</commons-codec.version>
+        <jjwt.version>0.12.5</jjwt.version>
         <paho-mqtt.version>1.2.5</paho-mqtt.version>
-        <spring-integration-mqtt.version>5.5.15</spring-integration-mqtt.version>
+        <!-- 使用与Spring Boot 3.2.0兼容的版本 -->
+        <spring-integration.version>6.2.1</spring-integration.version>
+        <spring-integration-mqtt.version>6.2.1</spring-integration-mqtt.version>
         <huawei-iot-sdk.version>1.2.2</huawei-iot-sdk.version>
         <!-- 明确JDK版本（与实际使用的JDK 17一致） -->
         <java.version>17</java.version>
+        <!-- 依赖检查和插件版本 -->
+        <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
+        <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
     </properties>
 
     <dependencies>
@@ -94,7 +100,7 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
 
-        <!-- JWT依赖 -->
+        <!-- JWT依赖 - 更新到兼容Spring Boot 3的版本 -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -111,6 +117,12 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>${jjwt.version}</version>
             <scope>runtime</scope>
+        </dependency>
+        
+        <!-- Spring Boot Actuator - 用于健康检查和监控 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <!-- MQTT客户端核心依赖 -->
@@ -140,10 +152,24 @@
             </exclusions>
         </dependency>
 
+
         <!-- 添加 jakarta.annotation 支持 -->
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
+        
+        <!-- 添加 jakarta.validation 支持 -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+
+        <!-- Swagger UI -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.2.0</version>
         </dependency>
 
     </dependencies>
@@ -155,6 +181,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.integration</groupId>
+                <artifactId>spring-integration-bom</artifactId>
+                <version>${spring-integration.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -184,13 +217,38 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version> <!-- 与报错的插件版本一致，避免冲突 -->
+                <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <!-- 兼容JDK 17的模块访问限制，避免反射报错 -->
-                    <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
-                    <!-- 可选：若测试代码本身有问题，可暂时开启跳过测试（注释掉则执行测试） -->
+                    <argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED</argLine>
+                    <!-- 可选：若测试代码本身有问题，可暂时开启跳过测试 -->
                     <!-- <skipTests>true</skipTests> -->
+                    <!-- 配置并行测试 -->
+                    <parallel>methods</parallel>
+                    <threadCount>4</threadCount>
                 </configuration>
+            </plugin>
+            
+            <!-- Checkstyle插件 - 代码风格检查 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <configuration>
+                    <configLocation>google_checks.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>false</failsOnError>
+                    <skip>true</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>checkstyle</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Spring Boot打包插件（补充兼容JDK 17参数） -->

@@ -33,4 +33,9 @@ public interface UserService {
     // 根据用户ID修改昵称
     int updateNicknameById(int user_id, String nickname);
 
+    // 验证密码
+    boolean verifyPassword(String rawPassword, String encodedPassword);
+
+    // 根据ID查找用户
+    User findById(int id);
 }

@@ -3,27 +3,35 @@ package com.ny.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Date;
 
 @Document(collection = "sensor_data")
+@Schema(description = "传感器数据实体类")
 public class SensorData {
     @Id
+    @Schema(description = "MongoDB文档ID")
     private String id;
 
     // 实体类属性名为 device_id，数据库字段名也为 device_id
     @Field("device_id")
+    @Schema(description = "设备ID")
     private String device_id;
 
     @Field("temperature")
+    @Schema(description = "温度")
     private Double temperature;
 
     @Field("humidity")
+    @Schema(description = "湿度")
     private Double humidity;
 
     @Field("ledStatus")
+    @Schema(description = "LED状态")
     private Boolean ledStatus;
 
     @Field("time")
+    @Schema(description = "时间")
     private Date time;
 
     // 构造方法、getter、setter
