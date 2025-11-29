@@ -9,6 +9,9 @@ COPY pom.xml .
 COPY mvnw .
 COPY .mvn .mvn
 
+# 添加执行权限给 mvnw 脚本
+RUN chmod +x ./mvnw
+
 # 添加非root用户，提高安全性
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
