@@ -26,8 +26,9 @@ RUN ./mvnw clean package -DskipTests
 FROM eclipse-temurin:17-jre-alpine
 
 # 添加非root用户，提高安全性
-RUN groupadd --system --gid 1001 appgroup && \
-    useradd --system --uid 1001 --gid 1001 appuser
+# 在 Alpine Linux 中使用 addgroup 和 adduser 命令
+RUN addgroup -S -g 1001 appgroup && \
+    adduser -S -u 1001 -G appgroup appuser
 
 # 设置工作目录
 WORKDIR /app
