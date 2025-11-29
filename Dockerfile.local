@@ -1,0 +1,33 @@
+# 创建一个简化版的 Dockerfile，用于本地构建后打包
+FROM openjdk:17-jre-slim
+
+# 添加非root用户，提高安全性
+RUN groupadd --system --gid 1001 appgroup && \
+    useradd --system --uid 1001 --gid 1001 appuser
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制本地构建的应用 JAR 文件
+COPY target/new_iot20220217079-0.0.1-SNAPSHOT.jar app.jar
+
+# 创建日志目录并设置权限
+RUN mkdir -p /app/logs && \
+    chown -R appuser:appgroup /app
+
+# 暴露端口 - 与 application.properties 中的默认端口一致
+EXPOSE 8081
+
+# 切换到非root用户运行
+USER appuser
+
+# 设置环境变量
+ENV SPRING_PROFILES_ACTIVE=production
+ENV JAVA_OPTS="-Xmx512m -Xms256m"
+
+# 添加健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:8081/actuator/health || exit 1
+
+# 运行应用
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

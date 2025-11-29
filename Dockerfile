@@ -1,8 +1,5 @@
-# 使用 Eclipse Temurin 17 JDK 镜像作为基础镜像，指定具体标签以避免版本变化问题
-FROM eclipse-temurin:17.0.11_9-jdk-alpine AS builder
-
-# 安装 Maven 和其他必要工具
-RUN apk add --no-cache maven curl
+# 使用 OpenJDK 17 JDK 镜像作为基础镜像，替代 Eclipse Temurin
+FROM openjdk:17-jdk-alpine AS builder
 
 # 设置工作目录
 WORKDIR /app
@@ -16,28 +13,31 @@ COPY .mvn .mvn
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 # 下载依赖但不编译代码，充分利用缓存
-RUN mvn dependency:go-offline -B
+RUN ./mvnw dependency:go-offline -B
 
 # 复制所有源代码和配置文件
 COPY src src
 
 # 构建应用
-RUN mvn clean package -DskipTests
+RUN ./mvnw clean package -DskipTests
 
 # 运行阶段
-FROM eclipse-temurin:17.0.11_9-jre-alpine
+# 使用 OpenJDK 17 JRE 镜像作为运行时基础镜像
+FROM openjdk:17-jre-slim
 
 # 添加非root用户，提高安全性
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN groupadd --system --gid 1001 appgroup && \
+    useradd --system --uid 1001 --gid 1001 appuser
 
 # 设置工作目录
 WORKDIR /app
 
-# 复制JAR文件并设置权限
-COPY --from=builder --chown=appuser:appgroup /app/target/new_iot20220217079-0.0.1-SNAPSHOT.jar app.jar
+# 复制应用 JAR 文件（需要先在本地构建）
+COPY --from=builder /app/target/new_iot20220217079-0.0.1-SNAPSHOT.jar app.jar
 
-# 创建日志目录
-RUN mkdir -p /app/logs && chown appuser:appgroup /app/logs
+# 创建日志目录并设置权限
+RUN mkdir -p /app/logs && \
+    chown -R appuser:appgroup /app
 
 # 暴露端口 - 与 application.properties 中的默认端口一致
 EXPOSE 8081
@@ -45,13 +45,13 @@ EXPOSE 8081
 # 切换到非root用户运行
 USER appuser
 
-# 设置环境变量，支持 Render 平台的环境变量注入
+# 设置环境变量
 ENV SPRING_PROFILES_ACTIVE=production
-ENV JAVA_OPTS="-Xmx512m -Xms256m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/app/logs/heapdump.hprof"
+ENV JAVA_OPTS="-Xmx512m -Xms256m"
 
-# 添加健康检查脚本
+# 添加健康检查
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:8081/actuator/health || exit 1
 
-# 运行应用 - 使用环境变量中的 JAVA_OPTS，并用 exec 转发信号
-ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar app.jar"]
+# 运行应用
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

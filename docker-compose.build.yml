@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  iot-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    image: iot-app
+    ports:
+      - "8081:8081"

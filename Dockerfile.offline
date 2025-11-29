@@ -1,0 +1,32 @@
+# 使用 busybox 作为基础镜像，完全离线构建
+FROM busybox:stable
+
+# 安装必要的工具
+RUN apk --no-cache add openjdk17-jre
+
+# 添加非root用户，提高安全性
+RUN addgroup -S appgroup && \
+    adduser -S appuser -G appgroup
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制本地构建的应用 JAR 文件
+COPY target/new_iot20220217079-0.0.1-SNAPSHOT.jar app.jar
+
+# 创建日志目录并设置权限
+RUN mkdir -p /app/logs && \
+    chown -R appuser:appgroup /app
+
+# 暴露端口 - 与 application.properties 中的默认端口一致
+EXPOSE 8081
+
+# 切换到非root用户运行
+USER appuser
+
+# 设置环境变量
+ENV SPRING_PROFILES_ACTIVE=production
+ENV JAVA_OPTS="-Xmx512m -Xms256m"
+
+# 运行应用
+CMD ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

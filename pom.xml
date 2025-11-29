@@ -37,6 +37,8 @@
         <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
         <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <!-- Jib plugin version -->
+        <jib-maven-plugin.version>3.4.0</jib-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -273,6 +275,29 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            
+            <!-- Jib Plugin for Docker image creation -->
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>${jib-maven-plugin.version}</version>
+                <configuration>
+                    <from>
+                        <image>openjdk:17-jre-slim</image>
+                    </from>
+                    <to>
+                        <image>iot-app</image>
+                    </to>
+                    <container>
+                        <ports>
+                            <port>8081</port>
+                        </ports>
+                        <environment>
+                            <SPRING_PROFILES_ACTIVE>production</SPRING_PROFILES_ACTIVE>
+                        </environment>
+                    </container>
+                </configuration>
             </plugin>
         </plugins>
     </build>
