@@ -1,5 +1,5 @@
-# 使用 OpenJDK 17 JDK 镜像作为基础镜像，替代 Eclipse Temurin
-FROM openjdk:17-jdk-alpine AS builder
+# 使用 Eclipse Temurin 17 JDK 镜像作为基础镜像，替代已废弃的 openjdk:17-jdk-alpine
+FROM eclipse-temurin:17-jdk-alpine AS builder
 
 # 设置工作目录
 WORKDIR /app
@@ -22,8 +22,8 @@ COPY src src
 RUN ./mvnw clean package -DskipTests
 
 # 运行阶段
-# 使用 OpenJDK 17 JRE 镜像作为运行时基础镜像
-FROM openjdk:17-jre-slim
+# 使用 Eclipse Temurin 17 JRE 镜像作为运行时基础镜像，替代已废弃的 openjdk:17-jre-slim
+FROM eclipse-temurin:17-jre-alpine
 
 # 添加非root用户，提高安全性
 RUN groupadd --system --gid 1001 appgroup && \
